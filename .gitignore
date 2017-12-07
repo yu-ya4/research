@@ -1,9 +1,9 @@
 # My packages
 chiebukuro/
-experience-geo-matrix/
+egmat/
 geosearch/
 mygensim/
-similar-actions/
+exsim/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
