@@ -1,0 +1,5 @@
+sqls memo
+
+# Get restaurants and their reviews
+SELECT res.restaurant_id, res.pr_comment_title, res.pr_comment_body, rev.id, rev.title, rev.body
+from restaurants as res left join reviews as rev on res.restaurant_id = rev.restaurant_id
