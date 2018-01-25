@@ -5,6 +5,9 @@ import gensim
 from exsim import document
 
 if __name__ == '__main__':
+    # document.make_text_file_from_database(0, 'where res.pal="kyoto" limit 500', '../../data/docs/test/test_500_reviews.txt')
+    # document.diveide_texts('../../data/docs/test/test_500_reviews.txt', '../../data/docs/test/test_500_reviews_divided.txt')
+    # exit()
     # Make text file from database
     # document.make_text_file_from_database(1, 'where res.pal="kyoto"', '../../data/docs/tabelog/kyoto_prs.txt')
     # document.make_text_file_from_database(1, 'where res.pal="osaka"', '../../data/docs/tabelog/osaka_prs.txt')
@@ -15,23 +18,31 @@ if __name__ == '__main__':
     # document.make_text_file_from_database(2, 'where res.pal="hyogo"', '../../data/docs/tabelog/hyogo_reviews_prs.txt')
     # document.diveide_texts('../../data/docs/test/test_reviews.txt', '../../data/docs/test/test_reviews_divided.txt')
     # docs = document.Documents()
-    # docs.read_documents('../../data/docs/test/test_divided.txt')
+    # docs.read_documents('../../data/docs/test/test_kyoto_reviews_divided.txt')
+    #
+
+
+    # docs = document.Documents()
+    # # docs.read_documents('../../data/docs/test/test_500_reviews_divided.txt')
+    # docs.read_documents('../../data/docs/test/test_500_reviews_divided.txt', '../../data/docs/test/test_500_reviews.txt.restaurant_ids.txt')
+    # docs.read_experience_list('chie-extracted2')
+    # docs.make_replace_dict()
+    # # #
+    # docs.replace_experiences_with_symbols('飲む', 5)
+    # docs.write_documents('../../data/docs/test/test_500_reviews_divided_replaced_5.txt')
+    # exit()
 
     docs = document.Documents()
-    docs.read_documents('../../data/docs/test/test_divided_replaced_5.txt')
-    # print(len(docs.documents))
-    # print(docs.documents[0])
-    # print(docs.documents[0].words)
     docs.read_experience_list('chie-extracted2')
-    # print(docs.experiences.experiences[0])
-    # print(docs.experiences.experiences[0].modifier)
     docs.make_replace_dict()
-    # print(docs.replace_dict)
-    # 「飲む」という語に注目．「飲む」の10語以内にある経験をなす語(experiencesに含まれる語)を記号に置き換える．
-    # docs.replace_experiences_with_symbols('飲む', 5)
-    # docs.write_documents('../../data/docs/test/test_divided_replaced_5.txt')
+    # docs.read_documents('../../data/docs/test/test_kyoto_reviews_divided_replaced_10.txt')
+    docs.read_documents('../../data/docs/test/test_kyoto_reviews_divided_replaced_5.txt')
 
-
-
-    docs.get_words_frequencies_around_experiences(15)
-    print(docs.words_frequencies_around_experiences)
+    exp_docs = docs.make_documents_for_each_experience()
+    exp_docs.calc_words_weight()
+    i = 0
+    for word, weight in sorted(exp_docs.all_documents_weight[32].items(), key = lambda x: x[1], reverse=True):
+        if i == 50:
+            break
+        print(word + ': ' + str(weight))
+        i += 1
