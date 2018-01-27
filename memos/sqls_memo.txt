@@ -1,0 +1,17 @@
+sqls memo
+
+# Get all restaurants and their reviews
+SELECT res.restaurant_id, res.pr_comment_title, res.pr_comment_body, rev.id, rev.title, rev.body
+from restaurants as res left join reviews as rev on res.restaurant_id = rev.restaurant_id
+
+# 京都市内の飲食店とそのレビュー，飲み屋「飲む」系の経験を検索する際の行列を作成
+# ジャンル
+# 居酒屋，ダイニングバー，立ち飲み居酒屋，バル・バール，ビアホール・ビアレストラン，居酒屋・ダイニングバー（その他）
+# バー，パブ，ラウンジ，ワインバー，ビアガーデン，ビアバー，スポーツバー，日本酒バー，焼酎バー，バー・お酒（その他）
+SELECT res.restaurant_id, res.pr_comment_title, res.pr_comment_body, rev.id, rev.title, rev.body
+from restaurants as res left join reviews as rev on res.restaurant_id = rev.restaurant_id
+where genre like '%居酒屋%' or genre like '%ダイニングバー%' or genre like '%立ち飲み居酒屋%'
+or genre like '%バル・バール%' or genre like '%ビアホール・ビアレストラン%' or genre like '%居酒屋・ダイニングバー（その他）%'
+or genre like '%バー%' or genre like '%パブ%' or genre like '%ラウンジ%' or genre like '%ワインバー%'
+or genre like '%ビアガーデン%' or genre like '%ビアバー%' or genre like '%スポーツバー%'
+or genre like '%日本酒バー%' or genre like '%焼酎バー%' or genre like '%バー・お酒（その他）%'
