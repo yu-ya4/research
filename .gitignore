@@ -4,6 +4,7 @@ egmat/
 geosearch/
 mygensim/
 exsim/
+cabocha-tool/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
