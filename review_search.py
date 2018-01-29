@@ -59,9 +59,18 @@ if __name__ == '__main__':
     # review_htmls, review_urls = searcher.get_reviews_from_tabelog_by_restaurant_url(restaurant_url)
     # reviews = searcher.parse_reviews(review_htmls, review_urls)
 
-
+    # flg = False
     restaurant_urls = searcher.get_restaurant_urls_without_reviews_from_db()
+    i = 0
     for restaurant_url in restaurant_urls:
+        # if restaurant_url == 'https://tabelog.com/osaka/A2701/A270101/27033772/':
+        #     flg = True
+        # if not flg:
+        #     continue
         review_htmls, review_urls = searcher.get_reviews_from_tabelog_by_restaurant_url(restaurant_url)
         reviews = searcher.parse_reviews(review_htmls, review_urls)
         searcher.save_reviews(reviews)
+        print(restaurant_url + ': ' + str(len(reviews)))
+        i += 1
+        if i % 100 == 0:
+            print(i)
