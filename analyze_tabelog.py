@@ -15,16 +15,22 @@ if __name__ == '__main__':
     # exit()
 
     all_modifier_frequencies_counter = Counter({})
-    review_files = glob.glob('../../data/docs/test/test_5000_reviews.txt')
+    review_files = glob.glob('../../data/docs/tabelog/reviews/drink/all/drink_*_reviews.txt')
     for review_file in review_files:
+        # データが大きすぎてメモリにのらなさそうなので分ける
         with open(review_file, 'r') as f:
-            text = f.read().replace('\n', '')
-            analyzer = ca.ChiebukuroAnalyzer(text)
-            modifiers_frequences = analyzer.get_modifiers_frequences('飲', '../../data/patterns/drink')
-            # print(modifiers_frequences)
-            modifiers_frequences_counter = Counter(modifiers_frequences)
-            all_modifier_frequencies_counter = all_modifier_frequencies_counter + modifiers_frequences_counter
-
+            text = ''
+            i = 0
+            for line in f:
+                line = line.replace('\n', '')
+                text += line
+                i += 1
+                if i % 10000 == 0:
+                    analyzer = ca.ChiebukuroAnalyzer(text)
+                    modifiers_frequences = analyzer.get_modifiers_frequences('飲', '../../data/patterns/drink')
+                    modifiers_frequences_counter = Counter(modifiers_frequences)
+                    all_modifier_frequencies_counter = all_modifier_frequencies_counter + modifiers_frequences_counter
+                    text = ''
     all_modifiers_frequencies = dict(all_modifier_frequencies_counter)
 
     with open('../../data/experiences/drink/around-words/around-drink.txt', 'w') as fw1:
