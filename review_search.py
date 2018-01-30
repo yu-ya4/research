@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from egmat import tabelog_searcher as ts
+from dbconnection import get_db_connection
 
 cat_list = [('BC', 'BC01', ''), ('BC', 'BC02', ''), ('BC', 'BC03', ''), ('BC', 'BC04', ''), ('BC', 'BC05', ''), ('BC', 'BC06', ''), ('BC', 'BC07', ''), ('BC', 'BC99', ''),
       ('RC', 'RC21', 'RC2101'), ('RC', 'RC21', 'RC2102'), ('RC', 'RC21', 'RC2199')]
@@ -26,12 +27,48 @@ def get_restaurants_url_not_in_database(conditions, num=0, offset=0):
     saved_restaurants_urls = searcher.get_restaurant_urls_from_db(conditions, num, offset)
     return saved_restaurants_urls
 
+def save_experiences(input_file, verb, label):
+    db_connection = get_db_connection()
+    cursor = db_connection.cursor()
+
+    with open(input_file, 'r') as f:
+        for line in f:
+            line = line.replace('\n', '')
+            modifire = line.split(' ')[0]
+            experience = {
+                'verb': verb,
+                'modifier': modifire,
+                'label': label
+            }
+
+            try:
+                cursor.execute(
+                    'INSERT INTO experiences(\
+                        verb,\
+                        modifier,\
+                        label\
+                    )\
+                    VALUES(\
+                        %(verb)s,\
+                        %(modifier)s,\
+                        %(label)s\
+                    )', experience)
+
+            except MySQLdb.Error as e:
+                print('MySQLdb.Error: ', e)
+        db_connection.commit()
+        cursor.close()
+        db_connection.close()
+
+
 if __name__ == '__main__':
     # tls = ts.TabelogSearcher()
     # review_htmls = tls.get_reviews_from_restaurant('https://tabelog.com/osaka/A2701/A270101/27052831/')
     # print(review_htmls[1])
     # print(len(review_htmls[1]))
 
+    # save_experiences('../../data/experiences/drink/selected-freq.txt', '飲む', 'drink')
+    # exit()
 
     searcher = ts.TabelogSearcher()
     # area_list = searcher.get_area_list_from_db()
@@ -59,18 +96,27 @@ if __name__ == '__main__':
     # review_htmls, review_urls = searcher.get_reviews_from_tabelog_by_restaurant_url(restaurant_url)
     # reviews = searcher.parse_reviews(review_htmls, review_urls)
 
-    # flg = False
+    # stop = 'https://tabelog.com/osaka/A2708/A270802/27098860/'
+    stop = 'https://tabelog.com/osaka/A2707/A270705/27069237/'
+
+    flg = False
     restaurant_urls = searcher.get_restaurant_urls_without_reviews_from_db()
+    if stop in restaurant_urls:
+        print(restaurant_urls.index(stop))
+    print(len(restaurant_urls))
     i = 0
-    for restaurant_url in restaurant_urls:
-        # if restaurant_url == 'https://tabelog.com/osaka/A2701/A270101/27033772/':
-        #     flg = True
-        # if not flg:
-        #     continue
-        review_htmls, review_urls = searcher.get_reviews_from_tabelog_by_restaurant_url(restaurant_url)
-        reviews = searcher.parse_reviews(review_htmls, review_urls)
-        searcher.save_reviews(reviews)
-        print(restaurant_url + ': ' + str(len(reviews)))
-        i += 1
-        if i % 100 == 0:
-            print(i)
+    with open('./tmp-resurl.txt', 'w') as fw:
+        for restaurant_url in restaurant_urls:
+            if restaurant_url == stop:
+                flg = True
+            if not flg:
+                continue
+            review_htmls, review_urls = searcher.get_reviews_from_tabelog_by_restaurant_url(restaurant_url)
+            reviews = searcher.parse_reviews(review_htmls, review_urls)
+            searcher.save_reviews(reviews)
+            print(restaurant_url + ': ' + str(len(reviews)))
+            if len(reviews) == 0:
+                fw.write(restaurant_url + '\n')
+            i += 1
+            if i % 100 == 0:
+                print(i)
