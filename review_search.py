@@ -97,13 +97,14 @@ if __name__ == '__main__':
     # reviews = searcher.parse_reviews(review_htmls, review_urls)
 
     # stop = 'https://tabelog.com/osaka/A2708/A270802/27098860/'
-    stop = 'https://tabelog.com/osaka/A2707/A270705/27069237/'
+    stop = 'https://tabelog.com/osaka/A2706/A270603/27025506/'
 
     flg = False
     restaurant_urls = searcher.get_restaurant_urls_without_reviews_from_db()
     if stop in restaurant_urls:
         print(restaurant_urls.index(stop))
     print(len(restaurant_urls))
+    # exit()
     i = 0
     with open('./tmp-resurl.txt', 'w') as fw:
         for restaurant_url in restaurant_urls:
